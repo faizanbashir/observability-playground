@@ -25,7 +25,7 @@ I have kept folder structure intact only adding one folder within `./src` folder
 10. `grafana`: This folder contains the files for installing Grafana, dashboards and configurations.
 
 ### Setup scripts
-The `start-local.sh` apart from installing the Kind cluster, installs kubectl binary, builds, pushes containers images to the local Docker registry and finally installs the frontend and backend applications and services. The `deploy-monitoring.sh` script orchestrates the services for observability including the tools mentioned under the previous heading. The `start-local.sh` contains the reference to the `deploy-monitoring.sh` towards the end of the script.
+The `init.sh` script invokes the `start-local.sh` script which installs the Kind cluster. Furthermore it goes on to installs kubectl binary, builds, pushes containers images to the local Docker registry and finally installs the frontend and backend applications and services. The `deploy-monitoring.sh` script orchestrates the services for observability including the tools mentioned under the previous heading. The `init.sh` contains the reference to the `start-local.sh` and  `deploy-monitoring.sh` towards the end of the script.
 
 ### Integration of the monitoring stack with PagerDuty
 Although I have not added the code for integration with PagerDuty in the monitoring scripts. I have provided a snippet here to show how we can integrate with PagerDuty. 
@@ -64,3 +64,8 @@ data:
 ```
 
 I have not used PagerDuty with Alertmanager before. But I have done integrations for OpsGenie and ServiceNow.
+
+### Pre-requisites
+1. These scripts have been developed and tested in a MacBook Pro OS Monterey (v12.1). I have not tested these scripts on Windows on Linux machines. Although the scripts should run on Linux machines with the exception of the installation of the `kubectl` utility which might have to be installed in a different bin path.
+2. `Docker` and `Kind` should be installed.
+3. The init script require `sudo` access to install the proper version of `kubectl` command-line utility in the `/usr/local/bin/kubectl` directory.
