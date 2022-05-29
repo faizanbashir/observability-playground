@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  metadata:
+  labels:
+    app.kubernetes.io/name: prometheus-mongodb-exporter
+    app.kubernetes.io/instance: mongodb
+  name: mongodb-exporter
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-mongodb-exporter
+      app.kubernetes.io/instance: mongodb
+  namespaceSelector:
+    any: true
+  endpoints:
+  - interval: 15s
+    port: metrics
+    path: /metrics

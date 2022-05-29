@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: kube-prometheus
+    app.kubernetes.io/part-of: kube-prometheus
+    prometheus: k8s
+    role: alert-rules
+  name: python-prometheus-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: python-guestbook-frontend
+    rules:
+    - alert: FrontendBlackboxProbeFailed
+      expr: probe_success == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: Blackbox probe failed for frontend (instance {{ $labels.instance }})
+        description: "Probe failed\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

@@ -1,0 +1,125 @@
+---
+# Source: prometheus-mongodb-exporter/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongodb-prometheus-mongodb-exporter
+  labels:
+    app.kubernetes.io/name: prometheus-mongodb-exporter
+    app.kubernetes.io/instance: mongodb
+---
+# Source: prometheus-mongodb-exporter/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-prometheus-mongodb-exporter
+  labels:
+    app.kubernetes.io/name: prometheus-mongodb-exporter
+    app.kubernetes.io/instance: mongodb
+type: Opaque
+data:
+  mongodb-uri : cHl0aG9uLWd1ZXN0Ym9vay1tb25nb2RiOjI3MDE3
+---
+# Source: prometheus-mongodb-exporter/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-prometheus-mongodb-exporter
+  labels:
+    app.kubernetes.io/name: prometheus-mongodb-exporter
+    app.kubernetes.io/instance: mongodb
+spec:
+  ports:
+    - port: 9216
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+  selector:
+    app.kubernetes.io/name: prometheus-mongodb-exporter
+    app.kubernetes.io/instance: mongodb
+  type: ClusterIP
+---
+# Source: prometheus-mongodb-exporter/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-prometheus-mongodb-exporter
+  labels:
+    app.kubernetes.io/name: prometheus-mongodb-exporter
+    app.kubernetes.io/instance: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-mongodb-exporter
+      app.kubernetes.io/instance: mongodb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: prometheus-mongodb-exporter
+        app.kubernetes.io/instance: mongodb
+    spec:
+      serviceAccountName: mongodb-prometheus-mongodb-exporter
+      containers:
+      - name: mongodb-exporter
+        env:
+          - name: MONGODB_URI
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-prometheus-mongodb-exporter
+                key: mongodb-uri
+        # image: "ssheehy/mongodb-exporter:0.10.0"
+        image: "percona/mongodb_exporter:0.32"
+        imagePullPolicy: IfNotPresent
+        args:
+        - --web.listen-address=:9216
+        # - --collect.collection
+        # - --collect.database
+        # - --collect.indexusage
+        # - --collect.topmetrics
+        # - --collect.connpoolstats
+        - --collect-all
+        ports:
+        - name: metrics
+          containerPort: 9216
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: metrics
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: metrics
+          initialDelaySeconds: 10
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - all
+          readOnlyRootFilesystem: true
+          runAsGroup: 10000
+          runAsNonRoot: true
+          runAsUser: 10000
+---
+# Source: prometheus-mongodb-exporter/templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mongodb-prometheus-mongodb-exporter
+  labels:
+    app.kubernetes.io/name: prometheus-mongodb-exporter
+    app.kubernetes.io/instance: mongodb
+spec:
+  endpoints:
+  - port: metrics
+    interval: 30s
+    scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+    - monitoring
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-mongodb-exporter
+      app.kubernetes.io/instance: mongodb

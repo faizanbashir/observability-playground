@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: kube-prometheus
+    app.kubernetes.io/part-of: kube-prometheus
+    prometheus: k8s
+    role: alert-rules
+  name: python-prometheus-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: python-guestbook-backend
+    rules:
+    - alert: PythonGuestBookBackendDown
+      annotations:
+        description: The Python Guestbook Backend has disappeared from Prometheus target
+          discovery.
+        runbook_url: https://google.com/
+        summary: Target disappeared from Prometheus target discovery.
+      expr: |
+        absent(up{job="monitoring/python-guestbook-backend"} == 1)
+      for: 15m
+      labels:
+        severity: critical
