@@ -58,37 +58,3 @@ data:
     host: "localhost:${reg_port}"
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
-
-###
-### Setup Ingress
-
-K8S_VERSION=$(kubectl version --short | grep "Server Version" | grep -Eo "v[0-9]\.[0-9]{1,2}" | grep -Eo "[0-9]\.[0-9]{1,2}")
-
-echo "Installing Latest Version of Kubectl (on Mac)"
-curl -LO "https://dl.k8s.io/release/${k8s_full_version}/bin/darwin/amd64/kubectl"
-chmod +x ./kubectl
-sudo mv kubectl /usr/local/bin/kubectl
-sudo chown root: /usr/local/bin/kubectl
-
-kubectl apply -f "https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/${k8s_version}/deploy.yaml"
-
-
-echo "Build, Tag and Push Docker image for Backend"
-docker build ./src/backend -t localhost:${reg_port}/python-guestbook-backend
-docker image push localhost:${reg_port}/python-guestbook-backend
-echo "Build, Tag and Push Docker image for Frontend"
-docker build ./src/frontend -t localhost:${reg_port}/python-guestbook-frontend
-docker image push localhost:${reg_port}/python-guestbook-frontend
-
-echo "Applying manifests"
-kubectl apply -f ./src/backend/kubernetes-manifests/
-kubectl apply -f ./src/frontend/kubernetes-manifests/
-
-echo "Check if the services are running"
-curl localhost:80 -I
-
-echo "Waiting for 15 secs before deploying the monitoring setup"
-
-sleep 15
-
-./deploy-monitoring.sh
