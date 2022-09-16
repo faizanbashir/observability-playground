@@ -5,10 +5,10 @@ data:
       "http_2xx":
         "http":
           "preferred_ip_protocol": "ip4"
-          "fail_if_not_ssl": "false"
-          "ip_protocol_fallback": "false"
+          "fail_if_not_ssl": false
+          "ip_protocol_fallback": false
           "method": "GET"
-          "no_follow_redirects": "false"
+          "no_follow_redirects": false
           "valid_http_versions": 
             - "HTTP/1.1"
             - "HTTP/2.0"
@@ -19,6 +19,18 @@ data:
           "method": "POST"
           "preferred_ip_protocol": "ip4"
         "prober": "http"
+      "icmp_ipv4":
+        "prober": "icmp"
+        "timeout": "5s"
+        "icmp":
+          "preferred_ip_protocol": "ip4"
+          "ip_protocol_fallback": false
+      "icmp_ipv6":
+        "prober": "icmp"
+        "timeout": "5s"
+        "icmp":
+          "preferred_ip_protocol": "ip6"
+          "ip_protocol_fallback": false
       "irc_banner":
         "prober": "tcp"
         "tcp":
