@@ -38,6 +38,9 @@ nodes:
   - containerPort: 443
     hostPort: 443
     protocol: TCP
+networking:
+  serviceSubnet: "10.96.0.0/12"
+  podSubnet: "10.244.0.0/16"
 EOF
 
 # connect the registry to the cluster network if not already connected
