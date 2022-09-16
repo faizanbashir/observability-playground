@@ -63,6 +63,9 @@ spec:
         securityContext:
           runAsNonRoot: true
           runAsUser: 65534
+          capabilities:
+            # add: ["CAP_SYS_ADMIN"]
+            add: ["NET_ADMIN"]
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
