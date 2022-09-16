@@ -14,4 +14,4 @@ spec:
   targets:
     staticConfig:
       static:
-      - http://python-guestbook-frontend.monitoring.svc:80
+      - http://python-guestbook-frontend.default.svc:80
