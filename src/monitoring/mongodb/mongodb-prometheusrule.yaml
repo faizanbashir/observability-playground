@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: kube-prometheus
+    app.kubernetes.io/part-of: kube-prometheus
+    prometheus: k8s
+    role: alert-rules
+  name: mongodb-prometheus-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: mongodb-prometheus-mongodb-exporter
+    rules:
+    - alert: MongoDBPrometheusExporter
+      annotations:
+        description: The MongoDB Prometheus Exporter has disappeared from Prometheus target
+          discovery.
+        runbook_url: https://google.com/
+        summary: Target disappeared from Prometheus target discovery.
+      expr: |
+        absent(up{job="mongodb-prometheus-mongodb-exporter"} == 1)
+      for: 15m
+      labels:
+        severity: critical

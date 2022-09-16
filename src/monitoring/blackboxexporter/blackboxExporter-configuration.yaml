@@ -1,0 +1,71 @@
+apiVersion: v1
+data:
+  config.yml: |-
+    "modules":
+      "http_2xx":
+        "http":
+          "preferred_ip_protocol": "ip4"
+          "fail_if_not_ssl": false
+          "ip_protocol_fallback": false
+          "method": "GET"
+          "no_follow_redirects": false
+          "valid_http_versions": 
+            - "HTTP/1.1"
+            - "HTTP/2.0"
+        "prober": "http"
+        "timeout": "15s"
+      "http_post_2xx":
+        "http":
+          "method": "POST"
+          "preferred_ip_protocol": "ip4"
+        "prober": "http"
+      "icmp_ipv4":
+        "prober": "icmp"
+        "timeout": "5s"
+        "icmp":
+          "preferred_ip_protocol": "ip4"
+          "ip_protocol_fallback": false
+      "icmp_ipv6":
+        "prober": "icmp"
+        "timeout": "5s"
+        "icmp":
+          "preferred_ip_protocol": "ip6"
+          "ip_protocol_fallback": false
+      "irc_banner":
+        "prober": "tcp"
+        "tcp":
+          "preferred_ip_protocol": "ip4"
+          "query_response":
+          - "send": "NICK prober"
+          - "send": "USER prober prober prober :prober"
+          - "expect": "PING :([^ ]+)"
+            "send": "PONG ${1}"
+          - "expect": "^:[^ ]+ 001"
+      "pop3s_banner":
+        "prober": "tcp"
+        "tcp":
+          "preferred_ip_protocol": "ip4"
+          "query_response":
+          - "expect": "^+OK"
+          "tls": true
+          "tls_config":
+            "insecure_skip_verify": false
+      "ssh_banner":
+        "prober": "tcp"
+        "tcp":
+          "preferred_ip_protocol": "ip4"
+          "query_response":
+          - "expect": "^SSH-2.0-"
+      "tcp_connect":
+        "prober": "tcp"
+        "tcp":
+          "preferred_ip_protocol": "ip4"
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: blackbox-exporter
+    app.kubernetes.io/part-of: kube-prometheus
+    app.kubernetes.io/version: 0.19.0
+  name: blackbox-exporter-configuration
+  namespace: monitoring
