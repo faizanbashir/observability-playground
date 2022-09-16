@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: snmp-exporter
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/part-of: kube-prometheus
+    app.kubernetes.io/name: snmp-exporter
+    app.kubernetes.io/version: 0.19.0
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9116
+      protocol: TCP
+  selector:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/part-of: kube-prometheus
+    app.kubernetes.io/name: snmp-exporter
