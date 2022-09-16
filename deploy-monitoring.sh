@@ -18,6 +18,9 @@ kubectl create -f ./src/monitoring/nodeexporter
 # install blackboxexporter
 kubectl create -f ./src/monitoring/blackboxexporter
 
+# install snmp exporter
+kubectl create -f ./src/monitoring/snmpexporter
+
 # install mongodbexporter
 kubectl create -f ./src/monitoring/mongodb
 
