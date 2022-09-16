@@ -2,7 +2,7 @@ reg_name='kind-registry'
 reg_port='5000'
 
 echo "Create kind cluster"
-# ./start-local.sh
+./start-local.sh
 
 echo "Installing Latest Version of Kubectl (on Mac)"
 curl -LO "https://dl.k8s.io/release/v1.23.6/bin/darwin/amd64/kubectl"
