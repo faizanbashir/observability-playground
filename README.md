@@ -1,7 +1,7 @@
 # Observability Playground
 
 ### Directory Structure
-I have kept folder structure intact only adding one folder within `./src` folder called `monitoring` which holds all the required code for observability setup. The `monitoring` folder has the following directories:
+The configurations for the monitoring setup are contained within the `./src` folder called `monitoring` which holds all the required code for observability setup. The `monitoring` folder has the following directories:
 1. `setup`: This folder contains the files for installing the CRD's.
 2. `prometheus`: This folder contains the files for installing the prometheus operator.
 3. `alertmanager`: This folder contains the files for installing the alertmanager.
